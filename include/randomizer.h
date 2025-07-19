@@ -123,6 +123,7 @@ static inline bool32 GroupSetsIntersect(struct RandomizerGroupSet* originalCache
 // This avoids a short hitch the first time the randomizer is used.
 // It's also a good idea to call this function if the randomizer mode changes.
 void PreloadRandomizationTables(void);
+void RandomizeAbilties(void);
 #endif
 
 #endif // RANDOMIZER_AVAILABLE

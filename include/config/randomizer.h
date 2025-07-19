@@ -40,6 +40,7 @@
 #define FORCE_RANDOMIZE_TRAINER_MON   TRUE
 #define FORCE_RANDOMIZE_FIXED_MON     TRUE
 #define FORCE_RANDOMIZE_STARTERS      TRUE
+#define FORCE_RANDOMIZE_ABILITIES     TRUE
 
 // These flags control whether a particular randomization feature is active.
 // They are ignored and disabled if the flags above are set.

@@ -27,6 +27,7 @@
 #include "constants/abilities.h"
 #include "constants/items.h"
 #include "constants/battle_frontier.h"
+#include "config/randomizer.h"
 
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleFrontierParty(void);
@@ -36,6 +37,8 @@ void HealPlayerParty(void)
 {
     u32 i;
     for (i = 0; i < gPlayerPartyCount; i++) {
+        MgbaPrintf(MGBA_LOG_ERROR, "healing pokemon %d\n", GetMonData(&gPlayerParty[i], MON_DATA_DEAD));
+
         if (GetMonData(&gPlayerParty[i], MON_DATA_DEAD)){
             if (!FlagGet(FLAG_NUZLOCKE) || !FlagGet(FLAG_SYS_POKEDEX_GET)){
                 bool8 dead = FALSE;
@@ -411,16 +414,23 @@ static u32 ScriptGiveMonParameterized(u8 side, u8 slot, u16 species, u8 level, u
     }
 
     // ability
-    if (abilityNum == NUM_ABILITY_PERSONALITY)
-    {
-        abilityNum = GetMonData(&mon, MON_DATA_PERSONALITY) & 1;
+    if(FORCE_RANDOMIZE_ABILITIES != 0 && FlagGet(FORCE_RANDOMIZE_ABILITIES)) {
+        abilityNum = Random() % NUM_ABILITY_SLOTS;
+        MgbaPrintf(MGBA_LOG_ERROR, "Randomizing ability: %d\n", abilityNum);
+    } else {
+        MgbaPrintf(MGBA_LOG_ERROR, "NOT RANDOMIZE");
+        if (abilityNum == NUM_ABILITY_PERSONALITY)
+        {
+            abilityNum = GetMonData(&mon, MON_DATA_PERSONALITY) & 1;
+        }
+        else if (abilityNum > NUM_NORMAL_ABILITY_SLOTS || GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE)
+        {
+            do {
+                abilityNum = Random() % NUM_ABILITY_SLOTS; // includes hidden abilities
+            } while (GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE);
+        }
     }
-    else if (abilityNum > NUM_NORMAL_ABILITY_SLOTS || GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE)
-    {
-        do {
-            abilityNum = Random() % NUM_ABILITY_SLOTS; // includes hidden abilities
-        } while (GetAbilityBySpecies(species, abilityNum) == ABILITY_NONE);
-    }
+
     SetMonData(&mon, MON_DATA_ABILITY_NUM, &abilityNum);
 
     // ball
@@ -521,6 +531,8 @@ void ScrCmd_createmon(struct ScriptContext *ctx)
     u8 speedIv        = Random() % (MAX_PER_STAT_IVS + 1);
     u8 spAtkIv        = Random() % (MAX_PER_STAT_IVS + 1);
     u8 spDefIv        = Random() % (MAX_PER_STAT_IVS + 1);
+
+    MgbaPrintf(MGBA_LOG_ERROR, "ability: %d\n", abilityNum);
 
     // Perfect IV calculation
     u32 i;

@@ -66,6 +66,7 @@
 #include "constants/union_room.h"
 #include "constants/weather.h"
 #include "wild_encounter.h"
+#include "randomizer.h"
 
 #define FRIENDSHIP_EVO_THRESHOLD ((P_FRIENDSHIP_EVO_THRESHOLD >= GEN_8) ? 160 : 220)
 
@@ -1118,6 +1119,8 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
     u8 selectedIvs[NUM_STATS];
     bool32 isShiny;
 
+    u16 speciesRandom = GetRandomizedSpeciesForAbility(species);
+
     ZeroBoxMonData(boxMon);
 
     // Determine original trainer ID
@@ -1278,7 +1281,7 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
         }
     }
 
-    if (gSpeciesInfo[species].abilities[1])
+    if (gSpeciesInfo[speciesRandom].abilities[1])
     {
         value = personality & 1;
         SetBoxMonData(boxMon, MON_DATA_ABILITY_NUM, &value);
@@ -3488,12 +3491,22 @@ u8 GetMonsStateToDoubles_2(void)
     return (aliveCount > 1) ? PLAYER_HAS_TWO_USABLE_MONS : PLAYER_HAS_ONE_USABLE_MON;
 }
 
+u16 GetRandomizedSpeciesForAbility(u16 species) {
+    #if (RANDOMIZER_AVAILABLE == TRUE) && (FORCE_RANDOMIZE_ABILITIES == TRUE)
+        return (VarGet(VAR_ABILITY_SEED) + species) % NUM_SPECIES;
+    #endif
+
+    return species;
+}
+
 u16 GetAbilityBySpecies(u16 species, u8 abilityNum)
 {
     int i;
 
+    u16 speciesRandomizer = GetRandomizedSpeciesForAbility(species);
+
     if (abilityNum < NUM_ABILITY_SLOTS)
-        gLastUsedAbility = gSpeciesInfo[species].abilities[abilityNum];
+        gLastUsedAbility = gSpeciesInfo[speciesRandomizer].abilities[abilityNum];
     else
         gLastUsedAbility = ABILITY_NONE;
 
@@ -3501,13 +3514,13 @@ u16 GetAbilityBySpecies(u16 species, u8 abilityNum)
     {
         for (i = NUM_NORMAL_ABILITY_SLOTS; i < NUM_ABILITY_SLOTS && gLastUsedAbility == ABILITY_NONE; i++)
         {
-            gLastUsedAbility = gSpeciesInfo[species].abilities[i];
+            gLastUsedAbility = gSpeciesInfo[speciesRandomizer].abilities[i];
         }
     }
 
     for (i = 0; i < NUM_ABILITY_SLOTS && gLastUsedAbility == ABILITY_NONE; i++) // look for any non-empty ability
     {
-        gLastUsedAbility = gSpeciesInfo[species].abilities[i];
+        gLastUsedAbility = gSpeciesInfo[speciesRandomizer].abilities[i];
     }
 
     return gLastUsedAbility;

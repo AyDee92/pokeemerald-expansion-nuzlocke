@@ -215,6 +215,9 @@ void NewGameInitData(void)
     #if (RANDOMIZER_AVAILABLE == TRUE) && (RANDOMIZER_DYNAMIC_SPECIES == TRUE)
         PreloadRandomizationTables();
     #endif
+
+    RandomizeAbilties();
+
     ResetItemFlags();
     ResetDexNav();
     ClearFollowerNPCData();

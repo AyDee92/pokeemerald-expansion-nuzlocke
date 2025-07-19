@@ -22,6 +22,9 @@ enum {
     FONT_SMALL_NARROWER,
     FONT_SHORT_NARROW,
     FONT_SHORT_NARROWER,
+    FONT_NORMAL_RED,
+    FONT_NORMAL_GREEN,
+    FONT_NORMAL_GRAY
 };
 
 // Return values for font functions

@@ -1359,6 +1359,8 @@ static u8 DexNavGetAbilityNum(u16 species, u8 searchLevel)
     u16 randVal = Random() % 100;
     u8 abilityNum = 0;
 
+    u16 speciesRandom = GetRandomizedSpeciesForAbility(species);
+
     if (searchLevel < 5)
     {
         #if (SEARCHLEVEL0_ABILITYCHANCE != 0)
@@ -1403,7 +1405,7 @@ static u8 DexNavGetAbilityNum(u16 species, u8 searchLevel)
     }
 
     if (genAbility
-            && gSpeciesInfo[species].abilities[2] != ABILITY_NONE
+            && gSpeciesInfo[speciesRandom].abilities[2] != ABILITY_NONE
             && GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
     {
         //Only give hidden ability if Pokemon has been caught before
@@ -1412,7 +1414,7 @@ static u8 DexNavGetAbilityNum(u16 species, u8 searchLevel)
     else
     {
         //Pick a normal ability of that Pokemon
-        if (gSpeciesInfo[species].abilities[1] != ABILITY_NONE)
+        if (gSpeciesInfo[speciesRandom].abilities[1] != ABILITY_NONE)
             abilityNum = Random() & 1;
         else
             abilityNum = 0;
@@ -2123,6 +2125,7 @@ static void SetTypeIconPosAndPal(u8 typeId, u8 x, u8 y, u8 spriteArrayId)
 static void PrintCurrentSpeciesInfo(void)
 {
     u16 species = DexNavGetSpecies();
+    u16 speciesRandom = GetRandomizedSpeciesForAbility(species);
     u16 dexNum = SpeciesToNationalPokedexNum(species);
     u8 type1, type2;
 
@@ -2173,8 +2176,8 @@ static void PrintCurrentSpeciesInfo(void)
     }
     else if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT))
     {
-        if (gSpeciesInfo[species].abilities[2] != ABILITY_NONE)
-            AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gAbilitiesInfo[gSpeciesInfo[species].abilities[2]].name);
+        if (gSpeciesInfo[speciesRandom].abilities[2] != ABILITY_NONE)
+            AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gAbilitiesInfo[gSpeciesInfo[speciesRandom].abilities[2]].name);
         else
             AddTextPrinterParameterized3(WINDOW_INFO, 0, 0, HA_INFO_Y, sFontColor_Black, 0, gText_None);
     }

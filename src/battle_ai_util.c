@@ -280,17 +280,21 @@ void SetBattlerData(u32 battlerId)
 {
     if (!BattlerHasAi(battlerId) && gAiThinkingStruct->saved[battlerId].saved)
     {
+        
         u32 i, species, illusionSpecies, side;
         side = GetBattlerSide(battlerId);
 
         // Simulate Illusion
         species = gBattleMons[battlerId].species;
+
+        u16 randomSpecies = GetRandomizedSpeciesForAbility(species);
+
         illusionSpecies = GetIllusionMonSpecies(battlerId);
         if (illusionSpecies != SPECIES_NONE && ShouldFailForIllusion(illusionSpecies, battlerId))
         {
             // If the battler's type has not been changed, AI assumes the types of the illusion mon.
-            if (gBattleMons[battlerId].types[0] == gSpeciesInfo[species].types[0]
-                && gBattleMons[battlerId].types[1] == gSpeciesInfo[species].types[1])
+            if (gBattleMons[battlerId].types[0] == gSpeciesInfo[randomSpecies].types[0]
+                && gBattleMons[battlerId].types[1] == gSpeciesInfo[randomSpecies].types[1])
             {
                 gBattleMons[battlerId].types[0] = gSpeciesInfo[illusionSpecies].types[0];
                 gBattleMons[battlerId].types[1] = gSpeciesInfo[illusionSpecies].types[1];
@@ -302,9 +306,9 @@ void SetBattlerData(u32 battlerId)
         if (gAiPartyData->mons[side][gBattlerPartyIndexes[battlerId]].ability != ABILITY_NONE)
             gBattleMons[battlerId].ability = gAiPartyData->mons[side][gBattlerPartyIndexes[battlerId]].ability;
         // Check if mon can only have one ability.
-        else if (gSpeciesInfo[species].abilities[1] == ABILITY_NONE
-                || gSpeciesInfo[species].abilities[1] == gSpeciesInfo[species].abilities[0])
-            gBattleMons[battlerId].ability = gSpeciesInfo[species].abilities[0];
+        else if (gSpeciesInfo[randomSpecies].abilities[1] == ABILITY_NONE
+                || gSpeciesInfo[randomSpecies].abilities[1] == gSpeciesInfo[randomSpecies].abilities[0])
+            gBattleMons[battlerId].ability = gSpeciesInfo[randomSpecies].abilities[0];
         // The ability is unknown.
         else
             gBattleMons[battlerId].ability = ABILITY_NONE;

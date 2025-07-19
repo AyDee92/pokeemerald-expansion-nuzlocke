@@ -605,6 +605,16 @@ void PreloadRandomizationTables(void)
     GetSpeciesTable(GetRandomizerOption(RANDOMIZER_OPTION_SPECIES_MODE));
 }
 
+void RandomizeAbilties(void) {
+    VarSet(VAR_ABILITY_SEED, 0);
+
+    #if (RANDOMIZER_AVAILABLE == TRUE) && (FORCE_RANDOMIZE_ABILITIES == TRUE)
+        MgbaPrintf(MGBA_LOG_ERROR, "randomizing abilities\n");
+        VarSet(VAR_ABILITY_SEED, Random() % NUM_SPECIES);
+    #endif
+}
+
+
 #endif
 
 static u16 RandomizeMonTableLookup(struct Sfc32State* state, enum RandomizerSpeciesMode mode, u16 species)

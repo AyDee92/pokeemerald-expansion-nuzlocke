@@ -2398,9 +2398,11 @@ static int GetTypeEffectivenessPoints(int move, int targetSpecies, int mode)
     if (move == MOVE_NONE || move == MOVE_UNAVAILABLE || IsBattleMoveStatus(move))
         return 0;
 
-    defType1 = gSpeciesInfo[targetSpecies].types[0];
-    defType2 = gSpeciesInfo[targetSpecies].types[1];
-    defAbility = gSpeciesInfo[targetSpecies].abilities[0];
+    u16 speciesRandom = GetRandomizedSpeciesForAbility(targetSpecies);
+
+    defType1 = gSpeciesInfo[speciesRandom].types[0];
+    defType2 = gSpeciesInfo[speciesRandom].types[1];
+    defAbility = gSpeciesInfo[speciesRandom].abilities[0];
     moveType = GetMoveType(move);
 
     if (defAbility == ABILITY_LEVITATE && moveType == TYPE_GROUND)
