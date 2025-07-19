@@ -401,7 +401,7 @@ extern const u8 gText_Speed[];
 extern const u8 gText_Dash[];
 extern const u8 gText_Plus[];
 
-//Pokédex text
+// Pokédex text
 extern const u8 gText_CryOf[];
 extern const u8 gText_SizeComparedTo[];
 extern const u8 gText_PokedexRegistration[];
@@ -523,6 +523,8 @@ extern const u8 gText_PokemonNature[];
 extern const u8 gText_PokemonMoves[];
 extern const u8 gText_Underpowered[];
 extern const u8 gText_WhenInDanger[];
+extern const u8 gText_InfiniteRepel[];
+extern const u8 gText_HealParty[];
 
 // Battle Frontier Maniac
 extern const u8 BattleFrontier_Lounge2_Text_SalonMaidenIsThere[];
@@ -2421,7 +2423,7 @@ extern const u8 gText_PlayerRegroupCenter[];
 extern const u8 gText_PlayerRegroupHome[];
 
 extern const u8 gText_Relearn[]; // move relearner from summary screen
-extern const u8 gText_Rename[]; // change nickname from summary screen
+extern const u8 gText_Rename[];  // change nickname from summary screen
 
 // Switch Caught Mon into Party
 extern const u8 gText_CannotSendMonToBoxHM[];

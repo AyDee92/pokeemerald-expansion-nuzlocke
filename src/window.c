@@ -20,7 +20,6 @@ static const struct WindowTemplate sDummyWindowTemplate = DUMMY_WIN_TEMPLATE;
 
 static void DummyWindowBgTilemap(void)
 {
-
 }
 
 bool32 InitWindows(const struct WindowTemplate *templates)
@@ -467,27 +466,27 @@ void FillWindowPixelBuffer(u32 windowId, u8 fillValue)
     CpuFastFill8(fillValue, gWindows[windowId].tileData, 32 * fillSize);
 }
 
-#define MOVE_TILES_DOWN(a)                                                      \
-{                                                                               \
-    destOffset = i + (a);                                                       \
-    srcOffset = i + (((width * (distanceLoop & ~7)) | (distanceLoop & 7)) * 4); \
-    if (srcOffset < size)                                                       \
-        *(u32 *)(tileData + destOffset) = *(u32 *)(tileData + srcOffset);         \
-    else                                                                        \
-        *(u32 *)(tileData + destOffset) = fillValue32;                           \
-    distanceLoop++;                                                             \
-}
+#define MOVE_TILES_DOWN(a)                                                          \
+    {                                                                               \
+        destOffset = i + (a);                                                       \
+        srcOffset = i + (((width * (distanceLoop & ~7)) | (distanceLoop & 7)) * 4); \
+        if (srcOffset < size)                                                       \
+            *(u32 *)(tileData + destOffset) = *(u32 *)(tileData + srcOffset);       \
+        else                                                                        \
+            *(u32 *)(tileData + destOffset) = fillValue32;                          \
+        distanceLoop++;                                                             \
+    }
 
-#define MOVE_TILES_UP(a)                                                        \
-{                                                                               \
-    destOffset = i + (a);                                                       \
-    srcOffset = i + (((width * (distanceLoop & ~7)) | (distanceLoop & 7)) * 4); \
-    if (srcOffset < size)                                                       \
-        *(u32 *)(tileData - destOffset) = *(u32 *)(tileData - srcOffset);         \
-    else                                                                        \
-        *(u32 *)(tileData - destOffset) = fillValue32;                           \
-    distanceLoop++;                                                             \
-}
+#define MOVE_TILES_UP(a)                                                            \
+    {                                                                               \
+        destOffset = i + (a);                                                       \
+        srcOffset = i + (((width * (distanceLoop & ~7)) | (distanceLoop & 7)) * 4); \
+        if (srcOffset < size)                                                       \
+            *(u32 *)(tileData - destOffset) = *(u32 *)(tileData - srcOffset);       \
+        else                                                                        \
+            *(u32 *)(tileData - destOffset) = fillValue32;                          \
+        distanceLoop++;                                                             \
+    }
 
 void ScrollWindow(u32 windowId, u8 direction, u8 distance, u8 fillValue)
 {
@@ -536,7 +535,7 @@ void ScrollWindow(u32 windowId, u8 direction, u8 distance, u8 fillValue)
     }
 }
 
-void CallWindowFunction(u32 windowId, void ( *func)(u8, u8, u8, u8, u8, u8))
+void CallWindowFunction(u32 windowId, void (*func)(u8, u8, u8, u8, u8, u8))
 {
     struct WindowTemplate window = gWindows[windowId].window;
     func(window.bg, window.tilemapLeft, window.tilemapTop, window.width, window.height, window.paletteNum);
@@ -608,7 +607,6 @@ static u32 GetNumActiveWindowsOnBg(u32 bgId)
 
 static void DummyWindowBgTilemap8Bit(void)
 {
-
 }
 
 u32 AddWindow8Bit(const struct WindowTemplate *template)
@@ -684,7 +682,7 @@ void BlitBitmapRectToWindow4BitTo8Bit(u32 windowId, const u8 *pixels, u16 srcX, 
     struct Bitmap sourceRect;
     struct Bitmap destRect;
 
-    sourceRect.pixels = (u8 *) pixels;
+    sourceRect.pixels = (u8 *)pixels;
     sourceRect.width = srcWidth;
     sourceRect.height = srcHeight;
 

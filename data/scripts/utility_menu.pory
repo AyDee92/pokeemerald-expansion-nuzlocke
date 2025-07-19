@@ -1,0 +1,35 @@
+script EventScript_UtilityMenu {
+  dynmultipush("Inf. Repel", 0)
+ 	dynmultipush("Heal Party", 1)
+
+  dynmultistack(0, 0, FALSE, 2, FALSE, 0, DYN_MULTICHOICE_CB_NONE)
+  switch (var(VAR_RESULT)) {
+      case 0: goto(EventScript_UtilityMenu_Repel)
+      case 1: goto(EventScript_UtilityMenu_HealParty)
+      case MULTI_B_PRESSED: goto(EventScript_UtilityMenu_Exit)
+  }
+}
+
+script EventScript_UtilityMenu_Repel {
+  if (var(VAR_INFINITE_REPEL) == 0) {
+      setvar(VAR_INFINITE_REPEL, 1)
+      msgbox("Repel effect: ON", MSGBOX_AUTOCLOSE)
+  } else {
+      setvar(VAR_INFINITE_REPEL, 0)
+      msgbox("Repel effect: OFF", MSGBOX_AUTOCLOSE)
+  }
+  end
+}
+
+script EventScript_UtilityMenu_HealParty {
+  playse(SE_USE_ITEM)
+  special(HealPlayerParty)
+  msgbox("Your Pokemon are healed!", MSGBOX_AUTOCLOSE)
+  end
+}
+
+script EventScript_UtilityMenu_Exit {
+  closemessage
+  release
+  end
+}
