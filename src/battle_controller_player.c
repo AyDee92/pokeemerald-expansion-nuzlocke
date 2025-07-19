@@ -1708,13 +1708,11 @@ enum
 static void MoveSelectionDisplayMoveType(u32 battler)
 {
     u8 *txtPtr, *end;
-    // u32 color = 420;
     u32 speciesId = gBattleMons[battler].species;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
     u32 move = moveInfo->moves[gMoveSelectionCursor[battler]];
     u32 type = GetMoveType(move);
-
     enum BattleMoveEffects effect = GetMoveEffect(move);
 
     if (effect == EFFECT_TERA_BLAST)
@@ -1724,16 +1722,20 @@ static void MoveSelectionDisplayMoveType(u32 battler)
     }
     else if (effect == EFFECT_IVY_CUDGEL)
     {
-        if (speciesId == SPECIES_OGERPON_WELLSPRING || speciesId == SPECIES_OGERPON_WELLSPRING_TERA || speciesId == SPECIES_OGERPON_HEARTHFLAME || speciesId == SPECIES_OGERPON_HEARTHFLAME_TERA || speciesId == SPECIES_OGERPON_CORNERSTONE || speciesId == SPECIES_OGERPON_CORNERSTONE_TERA)
+        if (speciesId == SPECIES_OGERPON_WELLSPRING || speciesId == SPECIES_OGERPON_WELLSPRING_TERA
+         || speciesId == SPECIES_OGERPON_HEARTHFLAME || speciesId == SPECIES_OGERPON_HEARTHFLAME_TERA
+         || speciesId == SPECIES_OGERPON_CORNERSTONE || speciesId == SPECIES_OGERPON_CORNERSTONE_TERA)
             type = gSpeciesInfo[speciesId].types[1];
     }
-    else if (GetMoveCategory(move) == DAMAGE_CATEGORY_STATUS && (GetActiveGimmick(battler) == GIMMICK_DYNAMAX || IsGimmickSelected(battler, GIMMICK_DYNAMAX)))
+    else if (GetMoveCategory(move) == DAMAGE_CATEGORY_STATUS
+             && (GetActiveGimmick(battler) == GIMMICK_DYNAMAX || IsGimmickSelected(battler, GIMMICK_DYNAMAX)))
     {
         type = TYPE_NORMAL; // Max Guard is always a Normal-type move
     }
     else if (effect == EFFECT_TERA_STARSTORM)
     {
-        if (speciesId == SPECIES_TERAPAGOS_STELLAR || (IsGimmickSelected(battler, GIMMICK_TERA) && speciesId == SPECIES_TERAPAGOS_TERASTAL))
+        if (speciesId == SPECIES_TERAPAGOS_STELLAR
+        || (IsGimmickSelected(battler, GIMMICK_TERA) && speciesId == SPECIES_TERAPAGOS_TERASTAL))
             type = TYPE_STELLAR;
     }
     else if (P_SHOW_DYNAMIC_TYPES) // Non-vanilla changes to battle UI showing dynamic types
@@ -1741,33 +1743,10 @@ static void MoveSelectionDisplayMoveType(u32 battler)
         struct Pokemon *mon = GetBattlerMon(battler);
         type = CheckDynamicMoveType(mon, move, battler, MON_IN_BATTLE);
     }
-
-    // u8 effectivness = CheckTargetTypeEffectiveness(battler);
-
-    // switch (effectivness)
-    // {
-    // case EFFECTIVENESS_SUPER_EFFECTIVE:
-    //     color = 4;
-    //     MgbaPrintf(MGBA_LOG_DEBUG, "Move is super effective\n");
-    //     break;
-    // case EFFECTIVENESS_NOT_VERY_EFFECTIVE:
-    //     color = 1;
-    //     MgbaPrintf(MGBA_LOG_DEBUG, "Move is not very effective\n");
-    //     break;
-    // case EFFECTIVENESS_NO_EFFECT:
-    //     MgbaPrintf(MGBA_LOG_DEBUG, "Move is immune\n");
-    //     color = 420;
-    //     break;
-    // case EFFECTIVENESS_NORMAL:
-    //     color = 12;
-    //     MgbaPrintf(MGBA_LOG_DEBUG, "Move is normal\n");
-    //     break;
-    // default:
-    //     break;
-    // }
+    end = StringCopy(txtPtr, gTypesInfo[type].name);
 
     PrependFontIdToFit(txtPtr, end, FONT_NORMAL, WindowWidthPx(B_WIN_MOVE_TYPE) - 25);
-    BattlePutTextOnWindowWithColor(gDisplayedStringBattle, B_WIN_MOVE_TYPE, random_number);
+    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);
 }
 
 static void TryMoveSelectionDisplayMoveDescription(u32 battler)
