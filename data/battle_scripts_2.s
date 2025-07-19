@@ -167,6 +167,10 @@ BattleScript_BallThrow::
 	printstring STRINGID_PLAYERUSEDITEM
 	handleballthrow
 
+BattleScript_CannotThrow::
+	printstring STRINGID_NUZLOCKECANNOTTHROW
+	end
+
 BattleScript_BallThrowByWally::
 	printstring STRINGID_WALLYUSEDITEM
 	handleballthrow

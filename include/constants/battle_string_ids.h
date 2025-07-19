@@ -11,6 +11,9 @@ enum StringID
     STRINGID_BATTLEEND,
     STRINGID_TRAINERSLIDE,
     STRINGID_TABLE_START, // Make sure to add new messages below this marker
+    STRINGID_NUZLOCKELOST,
+    STRINGID_NUZLOCKEDUPS,
+    STRINGID_NUZLOCKECANNOTTHROW,
     // todo: make some of those names less vague: attacker/target vs pkmn, etc.
     STRINGID_TRAINER1LOSETEXT,
     STRINGID_PKMNGAINEDEXP,

@@ -46,6 +46,9 @@
 #include "constants/items.h"
 #include "constants/songs.h"
 #include "constants/map_types.h"
+#include "battle_setup.h"
+#include "region_map.h"
+#include "battle_setup.h"
 
 static void SetUpItemUseCallback(u8);
 static void FieldCB_UseItemOnField(void);
@@ -1121,6 +1124,10 @@ static u32 GetBallThrowableState(void)
 
 bool32 CanThrowBall(void)
 {
+    if (gNuzlockeCannotCatch == 1){
+        return FALSE;
+    }
+
     return (GetBallThrowableState() == BALL_THROW_ABLE);
 }
 
@@ -1324,9 +1331,19 @@ void ItemUseInBattle_BagMenu(u8 taskId)
     else
     {
         PlaySE(SE_SELECT);
+
+        bool8 cannotThrow = (GetItemBattleUsage(gSpecialVar_ItemId) == EFFECT_ITEM_THROW_BALL) && gNuzlockeCannotCatch == 1;
+
+        if(cannotThrow) {
+            DisplayItemMessage(taskId, FONT_NORMAL, gStringVar4, CloseItemMessage);
+            return;
+        }
+
         if (!GetItemImportance(gSpecialVar_ItemId) && !(B_TRY_CATCH_TRAINER_BALL >= GEN_4 && (GetItemBattleUsage(gSpecialVar_ItemId) == EFFECT_ITEM_THROW_BALL) && (gBattleTypeFlags & BATTLE_TYPE_TRAINER)))
             RemoveUsedItem();
+
         ScheduleBgCopyTilemapToVram(2);
+
         if (!InBattlePyramid())
             gTasks[taskId].func = Task_FadeAndCloseBagMenu;
         else

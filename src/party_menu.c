@@ -2869,6 +2869,16 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
 
+    // This if statement causes dead pokemon to only be able to show summary, switch, and cancel. No field moves or items.
+    if (GetMonData(&mons[slotId], MON_DATA_DEAD) && FlagGet(FLAG_NUZLOCKE))
+    {
+        if (GetMonData(&mons[1], MON_DATA_SPECIES) != SPECIES_NONE)
+            AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SWITCH);
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_CANCEL1);
+        return;
+    }
+
+
     // Add field moves to action list
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
@@ -4747,7 +4757,8 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc task)
     u16 hp = 0;
     struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
     u16 item = gSpecialVar_ItemId;
-    bool8 canHeal, cannotUse;
+    bool8 canHeal = FALSE;
+    bool8 cannotUse;
     u32 oldStatus = GetMonData(mon, MON_DATA_STATUS);
 
     if (NotUsingHPEVItemOnShedinja(mon, item) == FALSE)
@@ -4770,7 +4781,10 @@ void ItemUseCB_Medicine(u8 taskId, TaskFunc task)
     {
         gPartyMenuUseExitCallback = FALSE;
         PlaySE(SE_SELECT);
-        DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
+        if (canHeal && FlagGet(FLAG_NUZLOCKE) && GetMonData(mon, MON_DATA_DEAD))
+            DisplayPartyMenuMessage(gText_WontHaveEffectNuzlocke, TRUE);
+        else
+            DisplayPartyMenuMessage(gText_WontHaveEffect, TRUE);
         ScheduleBgCopyTilemapToVram(2);
         if (gPartyMenu.menuType == PARTY_MENU_TYPE_FIELD)
             gTasks[taskId].func = Task_ReturnToChooseMonAfterText;

@@ -35,6 +35,7 @@
 #include "constants/trainers.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+#include "overworld.h"
 
 struct BattleWindowText
 {
@@ -135,6 +136,8 @@ static const u8 sText_SpAttack[] = _("Sp. Atk");
 static const u8 sText_SpDefense[] = _("Sp. Def");
 static const u8 sText_Accuracy[] = _("accuracy");
 static const u8 sText_Evasiveness[] = _("evasiveness");
+static const u8 sText_PlayerFailedNuzlocke[] = _("{B_PLAYER_NAME} failed the\nNuzlocke challenge.\pThe Nuzlocke setting\nhas been turned off.\p");
+static const u8 sText_CannotThrowBall[] = _("Cannot throw a ball in this location anymore...\p");
 
 const u8 *const gStatNamesTable[NUM_BATTLE_STATS] =
     {
@@ -2182,6 +2185,7 @@ void BufferStringBattle(enum StringID stringID, u32 battler)
         }
         else
         {
+            gNuzlockeCannotCatch = HasWildPokmnOnThisRouteBeenSeen(GetCurrentRegionMapSectionId(), FALSE);
             if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_RECORDED_LINK))
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
@@ -2295,6 +2299,13 @@ void BufferStringBattle(enum StringID stringID, u32 battler)
         break;
     case STRINGID_TRAINERSLIDE:
         stringPtr = gBattleStruct->trainerSlideMsg;
+        break;
+
+    case STRINGID_NUZLOCKELOST:
+        stringPtr = sText_PlayerFailedNuzlocke;
+        break;
+    case STRINGID_NUZLOCKECANNOTTHROW:
+        stringPtr = sText_CannotThrowBall;
         break;
     default: // load a string from the table
         if (stringID >= STRINGID_COUNT)
