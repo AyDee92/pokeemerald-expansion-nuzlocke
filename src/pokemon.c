@@ -67,6 +67,7 @@
 #include "constants/weather.h"
 #include "wild_encounter.h"
 #include "randomizer.h"
+#include "menu.h"
 
 #define FRIENDSHIP_EVO_THRESHOLD ((P_FRIENDSHIP_EVO_THRESHOLD >= GEN_8) ? 160 : 220)
 
@@ -1981,14 +1982,20 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon) //Credit: AsparagusEdua
             {
                 for (j = 0; j < MAX_MON_MOVES - 1; j++)
                     moves[j] = moves[j + 1];
-                moves[MAX_MON_MOVES - 1] = learnset[i].move;
+                    moves[MAX_MON_MOVES - 1] = learnset[i].move;
             }
         }
     }
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &moves[i]);
-        u32 pp = GetMovePP(moves[i]);
+        #if FORCE_RANDOMIZE_MOVES == TRUE
+            u16 move = Random() % MOVES_COUNT;
+        #else
+            u16 move = moves[i];
+        #endif
+
+        SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &move);
+        u32 pp = GetMovePP(move);
         SetBoxMonData(boxMon, MON_DATA_PP1 + i, &pp);
     }
 }
@@ -2038,6 +2045,11 @@ u16 MonTryLearningNewMoveAtLevel(struct Pokemon *mon, bool32 firstMove, u32 leve
     {
         gMoveToLearn = learnset[sLearningMoveTableID].move;
         sLearningMoveTableID++;
+
+        #if FORCE_RANDOMIZE_MOVES == TRUE
+            gMoveToLearn = Random() % MOVES_COUNT;
+        #endif
+
         retVal = GiveMoveToMon(mon, gMoveToLearn);
     }
 
@@ -3637,11 +3649,14 @@ u16 GetSpeciesWeight(u16 species)
     return gSpeciesInfo[SanitizeSpeciesId(species)].weight;
 }
 
+
 const struct LevelUpMove *GetSpeciesLevelUpLearnset(u16 species)
 {
     const struct LevelUpMove *learnset = gSpeciesInfo[SanitizeSpeciesId(species)].levelUpLearnset;
+
     if (learnset == NULL)
         return gSpeciesInfo[SPECIES_NONE].levelUpLearnset;
+
     return learnset;
 }
 

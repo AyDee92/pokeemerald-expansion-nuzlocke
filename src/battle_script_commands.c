@@ -8873,6 +8873,10 @@ static u32 GetTrainerMoneyToGive(u16 trainerId)
             moneyReward = 4 * lastMonLevel * gBattleStruct->moneyMultiplier * trainerMoney;
     }
 
+    if(FlagGet(FLAG_NUZLOCKE)) {
+        return moneyReward * 10;
+    }
+
     return moneyReward;
 }
 
