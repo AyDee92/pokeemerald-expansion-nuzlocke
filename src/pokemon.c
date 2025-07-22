@@ -1943,10 +1943,59 @@ void GiveMonInitialMoveset(struct Pokemon *mon)
     GiveBoxMonInitialMoveset(&mon->box);
 }
 
+u16 GenerateRandomMove(struct BoxPokemon *boxMon) {
+    u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
+    s32 level = GetLevelFromBoxMonExp(boxMon);
+    u16 type1 = gSpeciesInfo[species].types[0];
+    u16 type2 = gSpeciesInfo[species].types[1];
+
+    u16 levelMoves[MOVES_COUNT];
+    u16 index1;
+    u16 k = 0;
+    for(index1 = 1; index1 < MOVES_COUNT; index1++) {
+        u16 power = gMovesInfo[index1].power;
+
+        if(level < 16 && power < 70) {
+            levelMoves[k++] = index1;
+            continue;
+        }
+        if(level < 30 && level >= 16 && ((power < 80 && power > 40) || power == 0)) {
+            levelMoves[k++] = index1;
+            continue;
+        }
+        if(level >= 30 && (power > 60 || power == 0)) {
+            levelMoves[k++] = index1;
+        }
+    }
+
+    if(Random() % 100 < 35) {
+        u16 index2;
+        u16 m = 0;
+
+        for(index2 = 1; index2 < MOVES_COUNT; index2++) {
+            if(levelMoves[index2] == 0) {
+                break;
+            }
+            
+            if(gMovesInfo[levelMoves[index2]].type == type1 || gMovesInfo[levelMoves[index2]].type == type2) {
+                levelMoves[m++] = levelMoves[index2];
+            }
+        }
+
+        u16 ran = Random() % m;
+        u16 thisMove = levelMoves[ran];
+        
+        return thisMove;
+    } else {
+        return levelMoves[Random() % k];
+    }
+}
+
 void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon) //Credit: AsparagusEduardo
 {
     u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
     s32 level = GetLevelFromBoxMonExp(boxMon);
+
     s32 i;
     u16 moves[MAX_MON_MOVES] = {MOVE_NONE};
     u8 addedMoves = 0;
@@ -1988,10 +2037,11 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon) //Credit: AsparagusEdua
     }
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
+        u16 move = 0;
         #if FORCE_RANDOMIZE_MOVES == TRUE
-            u16 move = Random() % MOVES_COUNT;
+            move = moves[i] == MOVE_NONE ? MOVE_NONE : GenerateRandomMove(boxMon);
         #else
-            u16 move = moves[i];
+            move = moves[i];
         #endif
 
         SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &move);
@@ -2047,7 +2097,7 @@ u16 MonTryLearningNewMoveAtLevel(struct Pokemon *mon, bool32 firstMove, u32 leve
         sLearningMoveTableID++;
 
         #if FORCE_RANDOMIZE_MOVES == TRUE
-            gMoveToLearn = Random() % MOVES_COUNT;
+            gMoveToLearn = gMoveToLearn == MOVE_NONE ? MOVE_NONE : GenerateRandomMove(&mon->box);
         #endif
 
         retVal = GiveMoveToMon(mon, gMoveToLearn);
